@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captions — Real-time Speech-to-Text</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="/static/style.css?v=1.0.3">
+</head>
+<body>
+    <!-- Background glow gradients -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <main class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <span class="logo-icon">🎙️</span>
+                <h1><span class="gradient-text">Captions</span></h1>
+            </div>
+            <p class="subtitle">Experience state-of-the-art real-time speech recognition directly in your browser.</p>
+        </header>
+
+        <!-- Main Workspace Card -->
+        <section class="workspace-card">
+            <!-- Connection Status -->
+            <div class="status-bar">
+                <span class="status-label">Engine Status:</span>
+                <div class="status-indicator">
+                    <span id="status-dot" class="dot dot-offline"></span>
+                    <span id="status-text" class="status-text">Ready to start</span>
+                </div>
+            </div>
+
+            <!-- Audio Source Selection -->
+            <div class="audio-source-panel">
+                <label for="select-source" class="source-label">Capture Mode</label>
+                <div class="select-wrapper">
+                    <select id="select-source" class="source-select">
+                        <option value="mixed" selected>🎙️ Mixed (My Voice + FaceTime Speaker)</option>
+                        <option value="system">🔊 System Audio Only (FaceTime Speaker Only)</option>
+                        <option value="mic">🎤 Microphone Only (My Voice Only)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Visualizer Container -->
+            <div class="visualizer-container" id="visualizer-container">
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls-panel">
+                <button id="btn-start" class="btn btn-primary">
+                    <svg viewBox="0 0 24 24" class="icon"><path d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z"/></svg>
+                    Start Listening
+                </button>
+                <button id="btn-stop" class="btn btn-danger" disabled>
+                    <svg viewBox="0 0 24 24" class="icon"><path d="M18,18H6V6H18V18Z"/></svg>
+                    Stop Listening
+                </button>
+                <button id="btn-float" class="btn btn-accent">
+                    <svg viewBox="0 0 24 24" class="icon"><path d="M19,19H5V5H19M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M13,7H17V11H15V9H13M9,13H11V15H7V11H9" /></svg>
+                    Launch Float Window
+                </button>
+            </div>
+
+            <!-- FaceTime Guide -->
+            <div class="guide-panel">
+                <h4>💡 FaceTime Audio Capturing Guide:</h4>
+                <ol>
+                    <li>Select <strong>Mixed</strong> or <strong>System Audio</strong> mode and click <strong>Start Listening</strong>.</li>
+                    <li>Chrome will prompt you to share a screen or window. Choose the <strong>FaceTime</strong> window or your <strong>Entire Screen</strong>.</li>
+                    <li><strong>CRITICAL:</strong> Check the <strong>"Share system audio"</strong> checkbox in the bottom-left corner of the Chrome share popup! Otherwise FaceTime audio won't be captured.</li>
+                    <li><em>Safari/Firefox Fallback:</em> Install BlackHole (`brew install blackhole-2ch`), create an Aggregate Device with your Mic, set FaceTime output to a Multi-Output Device, and select it as your browser Mic source.</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- Transcript Display Panel -->
+        <section class="transcript-panel">
+            <div class="panel-header">
+                <h2>Real-time Transcription</h2>
+                <button id="btn-clear" class="btn-clear" title="Clear Transcript">Clear</button>
+            </div>
+            
+            <div class="transcript-box" id="transcript-box">
+                <p id="placeholder-text" class="placeholder-text">Click "Start Listening" and begin speaking to see your speech transcribed here in real-time...</p>
+                <span id="final-span" class="text-final"></span>
+                <span id="nonfinal-span" class="text-nonfinal"></span>
+            </div>
+        </section>
+
+        <!-- Footer / Technical Info -->
+        <footer class="app-footer">
+            <p>Powered by <strong>Soniox Speech-to-Text Realtime API (v4)</strong></p>
+        </footer>
+    </main>
+
+    <!-- App Script -->
+    <script src="/static/app.js?v=1.0.3"></script>
+</body>
+</html>

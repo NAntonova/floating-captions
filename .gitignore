@@ -1,0 +1,9 @@
+.venv/
+chrome-profile/
+__pycache__/
+*.log
+*.wav
+.DS_Store
+Captions.app/
+*.pyc
+bin/

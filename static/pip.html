@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Captions</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: rgba(10, 12, 16, 0.88);
+            --border-color: rgba(255, 255, 255, 0.12);
+            --text-primary: #ffffff;
+            --text-secondary: #9ca3af;
+            --primary: #00f0ff;
+            --accent: #a855f7;
+            --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            background-color: transparent !important;
+            height: 100%;
+            overflow: hidden;
+            font-family: var(--font-body);
+            user-select: none;
+            -webkit-user-select: none;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Premium semi-transparent container (optimized - no heavy backdrop blur to save CPU) */
+        .pip-container {
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            padding: 16px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Hover-to-reveal close button in top-right */
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.2s ease, background 0.2s ease;
+            z-index: 10;
+        }
+
+        .pip-container:hover .close-btn {
+            opacity: 0.6;
+        }
+
+        .close-btn:hover {
+            opacity: 1.0 !important;
+            background: rgba(239, 68, 68, 0.4);
+        }
+
+        /* Scrollable transcript area */
+        .pip-transcript-box {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; /* Keep scrolling text pinned to bottom */
+            padding-right: 4px;
+            scroll-behavior: smooth;
+        }
+
+        /* Hide scrollbars */
+        .pip-transcript-box::-webkit-scrollbar {
+            display: none;
+        }
+
+        .pip-scroll-wrapper {
+            display: inline;
+            font-size: 1.35rem;
+            line-height: 1.6;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+            word-wrap: break-word;
+        }
+
+        .pip-text-final {
+            color: var(--text-primary);
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+        }
+
+        .pip-text-nonfinal {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0.85;
+            border-bottom: 1.5px dashed rgba(0, 240, 255, 0.3);
+            text-shadow: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="pip-container">
+        <button class="close-btn" onclick="closeWindow()" title="Close overlay">×</button>
+        
+        <div class="pip-transcript-box" id="scroll-container">
+            <div class="pip-scroll-wrapper">
+                <span class="pip-text-final" id="final-span"></span>
+                <span class="pip-text-nonfinal" id="nonfinal-span"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function closeWindow() {
+            if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.closeHandler) {
+                window.webkit.messageHandlers.closeHandler.postMessage("close");
+            } else {
+                window.close();
+            }
+        }
+
+        const finalSpan = document.getElementById("final-span");
+        const nonfinalSpan = document.getElementById("nonfinal-span");
+        const scrollContainer = document.getElementById("scroll-container");
+
+        function scrollToBottom() {
+            scrollContainer.scrollTop = scrollContainer.scrollHeight;
+        }
+
+        const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+        const wsUrl = `${protocol}//${window.location.host}/captions_ws`;
+        
+        let socket = null;
+        
+        function connectWebSocket() {
+            socket = new WebSocket(wsUrl);
+            
+            socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === "init" || data.type === "update") {
+                    finalSpan.innerText = data.final;
+                    nonfinalSpan.innerText = data.nonfinal || "";
+                    scrollToBottom();
+                } else if (data.type === "clear") {
+                    finalSpan.innerText = "";
+                    nonfinalSpan.innerText = "";
+                }
+            };
+            
+            socket.onclose = () => {
+                console.log("Captions WebSocket closed. Retrying in 2 seconds...");
+                setTimeout(connectWebSocket, 2000);
+            };
+            
+            socket.onerror = (err) => {
+                console.error("Captions WebSocket error:", err);
+            };
+        }
+        
+        connectWebSocket();
+
+
+    </script>
+</body>
+</html>
