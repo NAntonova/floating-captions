@@ -4,6 +4,5 @@ __pycache__/
 *.log
 *.wav
 .DS_Store
-Captions.app/
 *.pyc
 bin/
