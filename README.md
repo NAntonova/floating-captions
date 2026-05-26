@@ -47,51 +47,19 @@ chmod +x Captions.app/Contents/MacOS/launcher
 
 ## macOS App Bundle Wrapper
 
-The repository includes a pre-configured macOS Application Bundle (`Captions.app`) to make launching the app convenient. 
+The repository includes a pre-configured macOS Application Bundle (`Captions.app`) to make launching the app convenient.
 
-If you ever need to recreate or rename this app wrapper from scratch, follow these steps:
+If you ever need to automatically recreate or rebuild this app wrapper, simply run the automated build utility script in the root directory:
+```bash
+./build_app.sh
+```
 
-1. **Create the Folder Structure**:
-   ```bash
-   mkdir -p "Captions.app/Contents/MacOS"
-   mkdir -p "Captions.app/Contents/Resources"
-   ```
+This script will:
+1. Rebuild the App Bundle directory structure (`Captions.app/Contents/MacOS` and `Resources`).
+2. Generate the necessary `Info.plist` configuration.
+3. Re-create the `launcher` bash script and make it executable.
+4. Copy the icon file (`assets/icon.icns`) into the bundle resources.
 
-2. **Configure launcher**:
-   Copy the `launcher` bash script into `Captions.app/Contents/MacOS/launcher` and make it executable:
-   ```bash
-   chmod +x Captions.app/Contents/MacOS/launcher
-   ```
-
-3. **Configure Info.plist**:
-   Create `Captions.app/Contents/Info.plist` with the following contents:
-   ```xml
-   <?xml version="1.0" encoding="UTF-8"?>
-   <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-   <plist version="1.0">
-   <dict>
-       <key>CFBundleExecutable</key>
-       <string>launcher</string>
-       <key>CFBundleIdentifier</key>
-       <string>com.natalia.captions</string>
-       <key>CFBundleName</key>
-       <string>Captions</string>
-       <key>CFBundlePackageType</key>
-       <string>APPL</string>
-       <key>CFBundleShortVersionString</key>
-       <string>1.0</string>
-       <key>LSMinimumSystemVersion</key>
-       <string>10.13</string>
-       <key>LSUIElement</key>
-       <false/>
-       <key>CFBundleIconFile</key>
-       <string>icon.icns</string>
-   </dict>
-   </plist>
-   ```
-
-4. **Add App Icon**:
-   Place your icon file in Apple Icon Image format (`.icns`) at `Captions.app/Contents/Resources/icon.icns`.
 
 ## How It Works
 
