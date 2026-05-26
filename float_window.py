@@ -14,8 +14,9 @@ class DraggableWebView(WebKit.WKWebView):
         bounds = self.bounds()
         
         # Close button area is at the top right corner.
-        # We assume a 45x45 pixels zone in the top right.
-        is_near_close_button = (point.x > bounds.size.width - 45) and (point.y > bounds.size.height - 45)
+        # Since WKWebView is a flipped view on macOS (origin top-left), the top-right corner
+        # has x near bounds.size.width and y near 0 (y < 45).
+        is_near_close_button = (point.x > bounds.size.width - 45) and (point.y < 45)
         
         if is_near_close_button:
             # Pass the event normally to let the HTML button handle it
@@ -28,6 +29,8 @@ class CloseMessageHandler(Cocoa.NSObject):
     def userContentController_didReceiveScriptMessage_(self, controller, message):
         if message.name() == "closeHandler":
             Cocoa.NSApp.terminate_(None)
+
+
 
 class UIDelegate(Cocoa.NSObject):
     def webViewDidClose_(self, webView):
