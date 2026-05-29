@@ -374,11 +374,60 @@ body {
     border-radius: 12px;
     padding: 1.25rem;
     overflow-y: auto;
-    font-size: 1.1rem;
+    font-size: var(--caption-font-size, 18px);
     line-height: 1.7;
     position: relative;
     scroll-behavior: smooth;
 }
+
+/* Font Size Control */
+.font-size-control {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    padding: 0.3rem 0.6rem;
+    border-radius: 10px;
+    color: var(--text-secondary);
+}
+.font-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    user-select: none;
+}
+.font-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 80px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+}
+.font-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--primary);
+    box-shadow: 0 0 4px var(--primary-glow);
+    transition: transform 0.1s ease;
+}
+.font-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.3);
+}
+.font-value {
+    font-size: 0.75rem;
+    font-family: monospace;
+    color: var(--text-faint);
+    min-width: 32px;
+    text-align: right;
+    user-select: none;
+}
+
 
 /* Custom Scrollbar for Transcript Box */
 .transcript-box::-webkit-scrollbar {

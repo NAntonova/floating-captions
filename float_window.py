@@ -13,12 +13,11 @@ class DraggableWebView(WebKit.WKWebView):
         point = self.convertPoint_fromView_(event.locationInWindow(), None)
         bounds = self.bounds()
         
-        # Close button area is at the top right corner.
-        # Since WKWebView is a flipped view on macOS (origin top-left), the top-right corner
-        # has x near bounds.size.width and y near 0 (y < 45).
-        is_near_close_button = (point.x > bounds.size.width - 45) and (point.y < 45)
+        # Close button is in top-right (x > bounds.size.width - 45, y < 45)
+        # Font size controls are in top-left (x < 70, y < 45)
+        is_near_interactive_element = ((point.x > bounds.size.width - 45) or (point.x < 70)) and (point.y < 45)
         
-        if is_near_close_button:
+        if is_near_interactive_element:
             # Pass the event normally to let the HTML button handle it
             objc.super(DraggableWebView, self).mouseDown_(event)
         else:

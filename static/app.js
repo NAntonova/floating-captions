@@ -380,3 +380,33 @@ function connectDashboardKeepalive() {
     };
 }
 connectDashboardKeepalive();
+
+// Font Size Control Logic
+const fontSizeSlider = document.getElementById("font-size-slider");
+const fontSizeValue = document.getElementById("font-size-value");
+
+function setFontSize(size) {
+    const parsedSize = parseInt(size, 10);
+    document.documentElement.style.setProperty("--caption-font-size", `${parsedSize}px`);
+    if (fontSizeSlider) fontSizeSlider.value = parsedSize;
+    if (fontSizeValue) fontSizeValue.innerText = `${parsedSize}px`;
+    localStorage.setItem("caption-font-size", parsedSize);
+}
+
+if (fontSizeSlider) {
+    fontSizeSlider.addEventListener("input", (e) => {
+        setFontSize(e.target.value);
+    });
+}
+
+// Read saved size on startup (default to 18px for dashboard)
+const savedFontSize = localStorage.getItem("caption-font-size") || 18;
+setFontSize(savedFontSize);
+
+// Sync with storage changes (e.g. from float window)
+window.addEventListener("storage", (e) => {
+    if (e.key === "caption-font-size" && e.newValue) {
+        setFontSize(e.newValue);
+    }
+});
+

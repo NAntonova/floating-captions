@@ -100,8 +100,15 @@
         <section class="transcript-panel">
             <div class="panel-header">
                 <h2>Real-time Transcription</h2>
+                <div class="font-size-control">
+                    <span class="font-label">A<sub>-</sub></span>
+                    <input type="range" id="font-size-slider" min="14" max="72" value="18" class="font-slider">
+                    <span class="font-label">A<sub>+</sub></span>
+                    <span id="font-size-value" class="font-value">18px</span>
+                </div>
                 <button id="btn-clear" class="btn-clear" title="Clear Transcript">Clear</button>
             </div>
+
             
             <div class="transcript-box" id="transcript-box">
                 <p id="placeholder-text" class="placeholder-text">Click "Start Listening" and begin speaking to see your speech transcribed here in real-time...</p>
