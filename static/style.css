@@ -288,13 +288,18 @@ body {
 .transcript-box {
     flex: 1;
     width: 100%;
+    max-width: 100%;
     overflow-y: auto;
+    overflow-x: hidden;
     font-size: var(--caption-font-size);
     line-height: 1.8;
     color: var(--text-primary);
     padding-bottom: 10rem; /* Space to scroll and breathe */
     scroll-behavior: smooth;
     position: relative;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 /* Hide scrollbars for absolute immersion */
 .transcript-box::-webkit-scrollbar {
@@ -312,6 +317,8 @@ body {
 .text-final {
     color: var(--text-primary);
     font-weight: 400;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .text-nonfinal {
@@ -321,6 +328,8 @@ body {
     opacity: 0.75;
     font-weight: 400;
     border-bottom: 1.5px dashed rgba(214, 195, 172, 0.25);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 /* Font Size Control Slider */

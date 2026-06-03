@@ -124,11 +124,15 @@
         .pip-transcript-box {
             flex: 1;
             overflow-y: auto;
+            overflow-x: hidden;
             display: flex;
             flex-direction: column;
             justify-content: flex-end; /* Keep scrolling text pinned to bottom */
             padding-right: 4px;
             scroll-behavior: smooth;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
         }
 
         /* Hide scrollbars */
@@ -148,6 +152,8 @@
         .pip-text-final {
             color: var(--text-primary);
             text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
 
         .pip-text-nonfinal {
@@ -157,6 +163,8 @@
             opacity: 0.85;
             border-bottom: 1.5px dashed rgba(214, 195, 172, 0.3);
             text-shadow: none;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
     </style>
 </head>
