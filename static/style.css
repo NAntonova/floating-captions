@@ -269,6 +269,21 @@ body {
     font-size: 0.8rem;
     color: var(--text-secondary);
 }
+.latency-indicator {
+    font-size: 0.8rem;
+    color: var(--text-faint);
+    margin-left: 0.75rem;
+    border-left: 1px solid var(--border-color);
+    padding-left: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+.latency-indicator span {
+    font-weight: 600;
+    font-family: monospace;
+    transition: color 0.2s ease;
+}
 .dot {
     width: 6px;
     height: 6px;

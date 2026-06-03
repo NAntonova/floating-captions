@@ -12,6 +12,8 @@ const finalSpan = document.getElementById("final-span");
 const nonfinalSpan = document.getElementById("nonfinal-span");
 const waveBars = document.querySelectorAll(".mini-bar");
 const visualizerMini = document.getElementById("visualizer-mini");
+const latencyIndicator = document.getElementById("latency-indicator");
+const latencyValue = document.getElementById("latency-value");
 
 // Audio & WebSocket Variables
 let audioContext = null;
@@ -19,6 +21,7 @@ let mediaStreams = []; // Track all active streams (mic, screen-share)
 let processorNode = null;
 let socket = null;
 let finalTranscript = "";
+let streamStartTime = null;
 
 // State syncing managed directly via backend websocket
 
@@ -87,6 +90,10 @@ async function startStreaming() {
             const captureMode = selectSource.value;
             await startAudioCapture(captureMode);
             setStatus("listening", "Listening...");
+            streamStartTime = Date.now();
+            if (latencyIndicator) {
+                latencyIndicator.style.display = "inline-flex";
+            }
             if (visualizerMini) {
                 visualizerMini.style.display = "flex";
             }
@@ -128,6 +135,16 @@ async function startStreaming() {
                 finalSpan.innerText = finalTranscript;
             }
             nonfinalSpan.innerText = currentNonFinals;
+            
+            // Calculate latency using the latest token's end time
+            if (data.tokens.length > 0 && streamStartTime) {
+                const lastToken = data.tokens[data.tokens.length - 1];
+                if (lastToken && typeof lastToken.end_ms === "number") {
+                    const latencyMs = Date.now() - (streamStartTime + lastToken.end_ms);
+                    const displayLatency = Math.max(0, latencyMs);
+                    updateLatencyDisplay(displayLatency);
+                }
+            }
             
             // Transcript broadcast is handled directly on the server-side to the captions websocket
             
@@ -262,6 +279,10 @@ function stopStreaming() {
     if (visualizerMini) {
         visualizerMini.style.display = "none";
     }
+    if (latencyIndicator) {
+        latencyIndicator.style.display = "none";
+    }
+    streamStartTime = null;
     
     if (processorNode) {
         processorNode.disconnect();
@@ -420,3 +441,19 @@ window.addEventListener("storage", (e) => {
         setFontSize(e.newValue);
     }
 });
+
+// Update Latency Display with color coding
+function updateLatencyDisplay(ms) {
+    if (!latencyIndicator || !latencyValue) return;
+    
+    const seconds = (ms / 1000).toFixed(2);
+    latencyValue.innerText = `${seconds}s`;
+    
+    if (ms < 1000) {
+        latencyValue.style.color = "var(--success)";
+    } else if (ms < 2000) {
+        latencyValue.style.color = "var(--primary)";
+    } else {
+        latencyValue.style.color = "var(--danger)";
+    }
+}
