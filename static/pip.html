@@ -3,21 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Captions</title>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <title>Captions Overlay</title>
     <style>
         :root {
-            --bg-color: rgba(10, 12, 16, 0.88);
-            --border-color: rgba(255, 255, 255, 0.12);
-            --text-primary: #ffffff;
-            --text-secondary: #9ca3af;
-            --primary: #00f0ff;
-            --accent: #a855f7;
-            --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --caption-font-size: 24px;
+            --text-primary: #f2efeb;
+            --text-secondary: #bab6ae;
+            --accent: #f7ede0;
+            --primary: #d6c3ac;
         }
 
         * {
@@ -26,49 +19,51 @@
             padding: 0;
         }
 
-        html, body {
+        body {
             background-color: transparent !important;
-            height: 100%;
-            overflow: hidden;
-            font-family: var(--font-body);
-            user-select: none;
-            -webkit-user-select: none;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100vh !important;
+            overflow: hidden !important;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            display: flex !important;
+            flex-direction: column !important;
         }
 
-        /* Premium semi-transparent container (optimized - no heavy backdrop blur to save CPU) */
+        /* macOS Spotlight / Apple Accessibility inspired glassmorphic container */
         .pip-container {
-            position: relative;
-            height: 100vh;
-            width: 100vw;
-            padding: 16px;
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 18px;
+            flex: 1;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            background: rgba(26, 25, 23, 0.75); /* Warm translucent dark surface */
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08); /* White sub-border */
+            border-radius: 18px; /* Native rounded corners */
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            padding: 1.25rem;
+            position: relative;
+            transition: background 0.3s ease;
         }
 
         /* Hover-to-reveal close button in top-right */
         .close-btn {
             position: absolute;
-            top: 10px;
-            right: 12px;
+            top: 12px;
+            right: 14px;
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
             color: var(--text-primary);
             border: none;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
-            font-weight: 500;
+            font-size: 14px;
+            font-weight: 400;
             opacity: 0;
             transition: opacity 0.2s ease, background 0.2s ease;
             z-index: 10;
@@ -80,14 +75,14 @@
 
         .close-btn:hover {
             opacity: 1.0 !important;
-            background: rgba(239, 68, 68, 0.4);
+            background: rgba(224, 108, 103, 0.5); /* Soft red close highlight */
         }
 
-        /* Hover-to-reveal font size adjustment in top-left */
+        /* Hover-to-reveal controls in top-left */
         .font-controls {
             position: absolute;
-            top: 10px;
-            left: 12px;
+            top: 12px;
+            left: 14px;
             display: flex;
             gap: 6px;
             opacity: 0;
@@ -107,21 +102,22 @@
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
             color: var(--text-primary);
             border: none;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 500;
             transition: background 0.2s ease;
             user-select: none;
+            -webkit-user-select: none;
         }
 
         .font-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.18);
         }
 
         /* Scrollable transcript area */
@@ -142,8 +138,8 @@
 
         .pip-scroll-wrapper {
             display: inline;
-            font-size: var(--caption-font-size, 22px);
-            line-height: 1.6;
+            font-size: var(--caption-font-size, 24px);
+            line-height: 1.5;
             font-weight: 400;
             letter-spacing: -0.01em;
             word-wrap: break-word;
@@ -159,19 +155,22 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             opacity: 0.85;
-            border-bottom: 1.5px dashed rgba(0, 240, 255, 0.3);
+            border-bottom: 1.5px dashed rgba(214, 195, 172, 0.3);
             text-shadow: none;
         }
     </style>
 </head>
 <body>
     <div class="pip-container">
+        <!-- Overlay Settings (revealed on hover) -->
         <div class="font-controls">
             <button class="font-btn" onclick="adjustFont(-2)" title="Decrease font size">−</button>
             <button class="font-btn" onclick="adjustFont(2)" title="Increase font size">+</button>
+            <button class="font-btn" onclick="toggleOpacity()" title="Cycle background opacity" id="opacity-btn">◑</button>
         </div>
         <button class="close-btn" onclick="closeWindow()" title="Close overlay">×</button>
         
+        <!-- Captions transcript -->
         <div class="pip-transcript-box" id="scroll-container">
             <div class="pip-scroll-wrapper">
                 <span class="pip-text-final" id="final-span"></span>
@@ -189,7 +188,9 @@
             }
         }
 
-        let currentSize = 22; // default starting size
+        let currentSize = 24; // default starting size
+        let opacityPresets = [0.75, 0.9, 0.5, 0.3];
+        let currentOpacityIndex = 0;
 
         function updateFontSize(size) {
             currentSize = parseInt(size, 10);
@@ -203,16 +204,43 @@
             updateFontSize(currentSize + delta);
         }
 
-        // Read saved size on startup
+        function updateOpacity(opacity) {
+            const val = parseFloat(opacity);
+            document.querySelector('.pip-container').style.background = `rgba(26, 25, 23, ${val})`;
+            localStorage.setItem('caption-opacity', val);
+            
+            // Sync active index
+            const index = opacityPresets.indexOf(val);
+            if (index !== -1) {
+                currentOpacityIndex = index;
+            }
+        }
+
+        function toggleOpacity() {
+            currentOpacityIndex = (currentOpacityIndex + 1) % opacityPresets.length;
+            updateOpacity(opacityPresets[currentOpacityIndex]);
+        }
+
+        // Read saved size and opacity on startup
         const savedSize = localStorage.getItem('caption-font-size');
         if (savedSize) {
             updateFontSize(savedSize);
+        }
+
+        const savedOpacity = localStorage.getItem('caption-opacity');
+        if (savedOpacity) {
+            updateOpacity(savedOpacity);
+        } else {
+            updateOpacity(0.75); // initial default
         }
 
         // Listen for storage changes from the dashboard
         window.addEventListener('storage', (event) => {
             if (event.key === 'caption-font-size' && event.newValue) {
                 updateFontSize(event.newValue);
+            }
+            if (event.key === 'caption-opacity' && event.newValue) {
+                updateOpacity(event.newValue);
             }
         });
 
@@ -223,7 +251,6 @@
         function scrollToBottom() {
             scrollContainer.scrollTop = scrollContainer.scrollHeight;
         }
-
 
         const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
         const wsUrl = `${protocol}//${window.location.host}/captions_ws`;
@@ -256,8 +283,6 @@
         }
         
         connectWebSocket();
-
-
     </script>
 </body>
 </html>

@@ -10,7 +10,11 @@ const transcriptBox = document.getElementById("transcript-box");
 const placeholderText = document.getElementById("placeholder-text");
 const finalSpan = document.getElementById("final-span");
 const nonfinalSpan = document.getElementById("nonfinal-span");
-const waveBars = document.querySelectorAll(".wave-bar");
+const waveBars = document.querySelectorAll(".mini-bar");
+const visualizerMini = document.getElementById("visualizer-mini");
+const btnSettings = document.getElementById("btn-settings");
+const btnCloseModal = document.getElementById("btn-close-modal");
+const modalOverlay = document.getElementById("settings-modal-overlay");
 
 // Audio & WebSocket Variables
 let audioContext = null;
@@ -86,6 +90,9 @@ async function startStreaming() {
             const captureMode = selectSource.value;
             await startAudioCapture(captureMode);
             setStatus("listening", "Listening...");
+            if (visualizerMini) {
+                visualizerMini.style.display = "flex";
+            }
             btnStop.disabled = false;
             if (placeholderText) {
                 placeholderText.style.display = "none";
@@ -255,6 +262,9 @@ function stopStreaming() {
     btnStop.disabled = true;
     selectSource.disabled = false;
     resetVisualizer();
+    if (visualizerMini) {
+        visualizerMini.style.display = "none";
+    }
     
     if (processorNode) {
         processorNode.disconnect();
@@ -280,6 +290,7 @@ function stopStreaming() {
     }
 }
 
+// Show error messages
 // Show error messages
 function showError(message) {
     const errorDiv = document.createElement("div");
@@ -339,6 +350,7 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
+// G.711 mu-law encoder to compress 16-bit signed PCM to 8-bit mu-law
 // G.711 mu-law encoder to compress 16-bit signed PCM to 8-bit mu-law
 function encodePcm16ToMulaw(pcm16Array) {
     const mulawBuffer = new Uint8Array(pcm16Array.length);
@@ -410,3 +422,21 @@ window.addEventListener("storage", (e) => {
     }
 });
 
+// Toggle Settings Modal
+if (btnSettings) {
+    btnSettings.addEventListener("click", () => {
+        if (modalOverlay) modalOverlay.classList.add("open");
+    });
+}
+if (btnCloseModal) {
+    btnCloseModal.addEventListener("click", () => {
+        if (modalOverlay) modalOverlay.classList.remove("open");
+    });
+}
+if (modalOverlay) {
+    modalOverlay.addEventListener("click", (e) => {
+        if (e.target === modalOverlay) {
+            modalOverlay.classList.remove("open");
+        }
+    });
+}
