@@ -300,26 +300,30 @@ function showError(message) {
     scrollToBottom(transcriptBox);
 }
 
-// Launch Native Transparent Window via backend
-async function launchFloatWindow() {
+// Toggle Native Transparent Window via backend
+async function toggleFloatWindow() {
     try {
-        console.log("Requesting native transparent window launch...");
-        const response = await fetch("/launch_float");
+        console.log("Toggling native transparent window...");
+        const response = await fetch("/toggle_float");
         const data = await response.json();
-        if (data.status === "success") {
+        if (data.status === "launched") {
             console.log(`Native transparent float window launched (PID: ${data.pid}).`);
+            btnFloat.classList.add("active");
+        } else if (data.status === "closed") {
+            console.log("Native transparent float window closed.");
+            btnFloat.classList.remove("active");
         } else {
-            console.error("Failed to launch native float window:", data.message);
+            console.error("Failed to toggle native float window:", data.message || data.status);
         }
     } catch (err) {
-        console.error("Error launching native float window:", err);
+        console.error("Error toggling native float window:", err);
     }
 }
 
 // Event Listeners
 btnStart.addEventListener("click", startStreaming);
 btnStop.addEventListener("click", stopStreaming);
-btnFloat.addEventListener("click", launchFloatWindow);
+btnFloat.addEventListener("click", toggleFloatWindow);
 
 btnClear.addEventListener("click", () => {
     finalTranscript = "";

@@ -112,6 +112,38 @@ async def close_float():
         return {"status": "success"}
     return {"status": "ignored"}
 
+@app.post("/toggle_float")
+@app.get("/toggle_float")
+async def toggle_float():
+    global float_process
+    is_running = False
+    if float_process is not None:
+        if float_process.poll() is None:
+            is_running = True
+        else:
+            float_process = None
+            
+    if is_running:
+        try:
+            float_process.terminate()
+            float_process.wait(timeout=1)
+        except Exception:
+            pass
+        float_process = None
+        return {"status": "closed"}
+    else:
+        try:
+            python_exe = os.path.join(".venv", "bin", "python")
+            if not os.path.exists(python_exe):
+                python_exe = "python"
+                
+            float_process = subprocess.Popen(
+                [python_exe, "float_window.py"]
+            )
+            return {"status": "launched", "pid": float_process.pid}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+
 # Global state for caption overlays
 current_final_transcript = ""
 caption_websockets = []
