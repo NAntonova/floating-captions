@@ -22,6 +22,8 @@ let processorNode = null;
 let socket = null;
 let finalTranscript = "";
 let streamStartTime = null;
+let latencyHistory = [];
+const LATENCY_WINDOW_SIZE = 10;
 
 // State syncing managed directly via backend websocket
 
@@ -136,13 +138,27 @@ async function startStreaming() {
             }
             nonfinalSpan.innerText = currentNonFinals;
             
-            // Calculate latency using the latest token's end time
+            // Calculate latency using the latest token's end time and sliding window median
             if (data.tokens.length > 0 && streamStartTime) {
                 const lastToken = data.tokens[data.tokens.length - 1];
                 if (lastToken && typeof lastToken.end_ms === "number") {
                     const latencyMs = Date.now() - (streamStartTime + lastToken.end_ms);
                     const displayLatency = Math.max(0, latencyMs);
-                    updateLatencyDisplay(displayLatency);
+                    
+                    // Add to sliding window
+                    latencyHistory.push(displayLatency);
+                    if (latencyHistory.length > LATENCY_WINDOW_SIZE) {
+                        latencyHistory.shift();
+                    }
+                    
+                    // Compute median
+                    const sorted = [...latencyHistory].sort((a, b) => a - b);
+                    const mid = Math.floor(sorted.length / 2);
+                    const median = sorted.length % 2 !== 0 
+                        ? sorted[mid] 
+                        : (sorted[mid - 1] + sorted[mid]) / 2;
+                        
+                    updateLatencyDisplay(median);
                 }
             }
             
@@ -283,6 +299,7 @@ function stopStreaming() {
         latencyIndicator.style.display = "none";
     }
     streamStartTime = null;
+    latencyHistory = [];
     
     if (processorNode) {
         processorNode.disconnect();
