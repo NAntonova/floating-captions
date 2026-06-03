@@ -463,8 +463,8 @@ window.addEventListener("storage", (e) => {
 function updateLatencyDisplay(ms) {
     if (!latencyIndicator || !latencyValue) return;
     
-    const seconds = (ms / 1000).toFixed(2);
-    latencyValue.innerText = `${seconds}s`;
+    const roundedMs = Math.round(ms);
+    latencyValue.innerText = `${roundedMs}ms`;
     
     if (ms < 1000) {
         latencyValue.style.color = "var(--success)";
