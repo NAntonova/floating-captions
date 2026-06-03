@@ -384,7 +384,6 @@ body {
     line-height: 1.8;
     color: var(--text-secondary);
     padding-bottom: 2rem;
-    scroll-behavior: smooth;
     position: relative;
     word-wrap: break-word;
     overflow-wrap: break-word;
