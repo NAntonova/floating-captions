@@ -9,25 +9,59 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <!-- Main Style Sheet -->
-    <link rel="stylesheet" href="/static/style.css?v=1.0.3">
+    <link rel="stylesheet" href="/static/style.css?v=1.0.4">
 </head>
 <body>
     <!-- Background glow gradients -->
     <div class="bg-glow bg-glow-1"></div>
     <div class="bg-glow bg-glow-2"></div>
  
-    <!-- Minimal Top Toolbar -->
-    <header class="app-toolbar">
-        <div class="logo-area">
-            <span class="logo-icon">🎙️</span>
-            <span class="logo-text">Captions</span>
-        </div>
- 
-        <div class="toolbar-controls">
-            <!-- Engine Status -->
-            <div class="status-indicator">
-                <span id="status-dot" class="dot dot-offline"></span>
-                <span id="status-text" class="status-text">Offline</span>
+    <main class="app-container">
+        <!-- Brand Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <span class="logo-icon">🎙️</span>
+                <h1>Captions</h1>
+            </div>
+            <p class="subtitle">Real-time Speech Recognition for Power Users</p>
+        </header>
+
+        <!-- Center Control Section -->
+        <section class="control-panel">
+            <!-- Capture Mode dropdown -->
+            <div class="audio-source-row">
+                <label for="select-source" class="source-label">Capture Mode</label>
+                <div class="select-wrapper">
+                    <select id="select-source" class="source-select" title="Capture Mode">
+                        <option value="mixed" selected>Mixed (My Voice + FaceTime Speaker)</option>
+                        <option value="system">System Audio Only (Speaker Only)</option>
+                        <option value="mic">Microphone Only (Voice Only)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Prominent Buttons Bar -->
+            <div class="action-buttons-row">
+                <button id="btn-start" class="btn-premium btn-listen" title="Start Listening">
+                    <svg viewBox="0 0 24 24"><path d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z"/></svg>
+                    Listen
+                </button>
+                <button id="btn-stop" class="btn-premium btn-stop" disabled title="Stop Listening">
+                    <svg viewBox="0 0 24 24"><path d="M18,18H6V6H18V18Z"/></svg>
+                    Stop
+                </button>
+                <button id="btn-float" class="btn-premium btn-float" title="Launch Floating Overlay">
+                    <svg viewBox="0 0 24 24"><path d="M19,19H5V5H19M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M13,7H17V11H15V9H13M9,13H11V15H7V11H9" /></svg>
+                    Float captions
+                </button>
+            </div>
+
+            <!-- Integrated Status and Audio Visualizer -->
+            <div class="status-row">
+                <div class="status-indicator">
+                    <span id="status-dot" class="dot dot-offline"></span>
+                    <span id="status-text" class="status-text">Ready to start</span>
+                </div>
                 
                 <!-- Tiny Audio Wave Visualizer -->
                 <div class="visualizer-mini" id="visualizer-mini" style="display: none;">
@@ -37,43 +71,12 @@
                     <div class="mini-bar"></div>
                 </div>
             </div>
- 
-            <!-- Audio Capture Source Selector -->
-            <div class="select-wrapper">
-                <select id="select-source" class="source-select" title="Capture Mode">
-                    <option value="mixed" selected>🎙️ Mixed (Voice + Speaker)</option>
-                    <option value="system">🔊 System Audio Only</option>
-                    <option value="mic">🎤 Microphone Only</option>
-                </select>
-            </div>
- 
-            <!-- Control Buttons -->
-            <button id="btn-start" class="btn-minimal" title="Start Listening">
-                <svg viewBox="0 0 24 24"><path d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z"/></svg>
-                Listen
-            </button>
-            <button id="btn-stop" class="btn-minimal" disabled title="Stop Listening">
-                <svg viewBox="0 0 24 24"><path d="M18,18H6V6H18V18Z"/></svg>
-                Stop
-            </button>
-            <button id="btn-float" class="btn-minimal" title="Launch Float overlay">
-                <svg viewBox="0 0 24 24"><path d="M19,19H5V5H19M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M13,7H17V11H15V9H13M9,13H11V15H7V11H9" /></svg>
-                Overlay
-            </button>
- 
-            <!-- Settings Toggler -->
-            <button id="btn-settings" class="btn-settings" title="Application Settings">
-                <svg viewBox="0 0 24 24"><path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.47,5.34 14.86,5.08L14.47,2.42C14.43,2.18 14.22,2 13.97,2H9.97C9.72,2 9.51,2.18 9.47,2.42L9.09,5.08C8.47,5.34 7.9,5.66 7.38,6.05L4.89,5.05C4.67,4.96 4.4,5.05 4.28,5.27L2.28,8.73C2.16,8.95 2.21,9.22 2.4,9.37L4.51,11C4.47,11.34 4.5,11.67 4.5,12C4.5,12.33 4.47,12.65 4.51,12.97L2.4,14.63C2.21,14.78 2.16,15.05 2.28,15.27L4.28,18.73C4.4,18.95 4.67,19.04 4.89,18.95L7.38,17.95C7.9,18.34 8.47,18.66 9.09,18.92L9.47,21.58C9.51,21.82 9.72,22 9.97,22H13.97C14.22,22 14.43,21.82 14.47,21.58L14.86,18.92C15.47,18.66 16.04,18.34 16.56,17.95L19.05,18.95C19.27,19.04 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/></svg>
-            </button>
-        </div>
-    </header>
- 
-    <!-- Main Workspace -->
-    <main class="app-main">
-        <section class="transcript-container">
-            <!-- Transcript Header -->
+        </section>
+
+        <!-- Secondary Live Transcript Preview -->
+        <section class="transcript-preview-panel">
             <div class="transcript-header">
-                <h2>Live Transcript</h2>
+                <h2>Transcript Preview</h2>
                 
                 <!-- Compact Font Size slider -->
                 <div class="font-size-control">
@@ -88,53 +91,20 @@
  
             <!-- Focused Transcript Box -->
             <div class="transcript-box" id="transcript-box">
-                <p id="placeholder-text" class="placeholder-text">Begin speaking or start your video call to display real-time transcriptions here...</p>
+                <p id="placeholder-text" class="placeholder-text">Subtitles will appear here as a preview. Use "Float captions" for the overlay window.</p>
                 <span id="final-span" class="text-final"></span>
                 <span id="nonfinal-span" class="text-nonfinal"></span>
             </div>
         </section>
+
+        <!-- FaceTime Aggregate Device Guide -->
+        <footer class="app-guide">
+            <h3>💡 FaceTime Audio Capturing Guide</h3>
+            <p>Select <strong>Mixed</strong> or <strong>System Audio</strong> mode and click <strong>Listen</strong>. In the Chrome share dialog, select the <strong>FaceTime</strong> window or <strong>Entire Screen</strong>, and make sure to check the <strong>"Share system audio"</strong> checkbox at the bottom. Otherwise speaker audio cannot be captured.</p>
+        </footer>
     </main>
  
-    <!-- Settings Overlay Modal (Raycast style) -->
-    <div class="modal-overlay" id="settings-modal-overlay">
-        <div class="settings-modal">
-            <header class="modal-header">
-                <h3>Application Settings</h3>
-                <button id="btn-close-modal" class="btn-close-modal" title="Close Settings">×</button>
-            </header>
- 
-            <div class="modal-body">
-                <!-- Guide Section -->
-                <div class="settings-section">
-                    <h4>💡 FaceTime Audio Capturing Guide</h4>
-                    <ol class="guide-list">
-                        <li>Select <strong>Mixed</strong> or <strong>System Audio</strong> capture mode.</li>
-                        <li>Click <strong>Listen</strong> and Chrome will prompt you to share a screen or window.</li>
-                        <li>Select the <strong>FaceTime</strong> window or your <strong>Entire Screen</strong>.</li>
-                        <li><strong>CRITICAL:</strong> Check the <strong>"Share system audio"</strong> checkbox in the Chrome share popup window! Otherwise FaceTime speaker audio won't be captured.</li>
-                        <li><em>Safari/Firefox Fallback:</em> Create an Aggregate Device with BlackHole and map it as your default Mic source.</li>
-                    </ol>
-                </div>
- 
-                <!-- Info Section -->
-                <div class="settings-section">
-                    <h4>⚙️ System Info</h4>
-                    <ul class="guide-list" style="list-style-type: none; padding-left: 0;">
-                        <li>Status: <strong style="color: var(--text-primary)">Ready to connect</strong></li>
-                        <li>Backend Host: <code style="font-family: monospace; color: var(--primary);">localhost:8000</code></li>
-                        <li>Interface Resolution: <strong style="color: var(--text-primary)">Consumer High-DPI</strong></li>
-                    </ul>
-                </div>
-            </div>
- 
-            <footer class="modal-footer">
-                <p>Powered by <strong>Soniox Realtime API (v4)</strong></p>
-                <span>v1.1.0</span>
-            </footer>
-        </div>
-    </div>
- 
     <!-- App Script -->
-    <script src="/static/app.js?v=1.0.3"></script>
+    <script src="/static/app.js?v=1.0.4"></script>
 </body>
 </html>
